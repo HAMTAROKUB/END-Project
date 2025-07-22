@@ -11,6 +11,7 @@ import {
   PostGroq,
   CreateTrip,
   CreateShortestPath,
+  ExportTripToTemplate
 } from '../../services/https';
 
 
@@ -275,6 +276,31 @@ ${JSON.stringify(routeData.trip_plan, null, 2)}
         }
       }
 
+            // ✅ เรียก ExportTripToTemplate หลังจากบันทึก Path ทั้งหมดแล้ว
+try {
+  const exportResult = await ExportTripToTemplate(savedTrip.ID!);
+  console.log('📄 สร้างเอกสารจาก template สำเร็จ:', exportResult);
+
+  // ส่งลิงก์ให้ผู้ใช้เปิดดู
+  if (exportResult) {
+  setMessages((prev) => [
+    ...prev,
+    {
+      text: `คลิกที่นี่เพื่อดูแผนทริปของคุณ: [ดูแผนทริป](${exportResult})`,
+      sender: 'bot',
+    },
+  ]);
+}
+} catch (err) {
+  console.error('❌ ExportTripToTemplate ล้มเหลว:', err);
+  setMessages((prev) => [
+    ...prev,
+    {
+      text: 'ไม่สามารถสร้างแผนทริปในรูปแบบเอกสารได้ในขณะนี้ กรุณาลองใหม่ภายหลัง',
+      sender: 'bot',
+    },
+  ]);
+}
 
     } catch (error) {
       console.error('Error generating route or calling Groq', error);

@@ -94,6 +94,7 @@ func main() {
 	r.POST("/trips", tripsCtrl.CreateTrip)
 	authorized.GET("/trips", tripsCtrl.GetAllTrips)
 	authorized.GET("/trips/:id", tripsCtrl.GetTripByID)
+	r.GET("/trips/:id/export", tripsCtrl.ExportTripToTemplate)
 	authorized.PUT("/trips/:id", tripsCtrl.UpdateTrip)
 	authorized.DELETE("/trips/:id", tripsCtrl.DeleteTrip)
 
@@ -111,12 +112,4 @@ func main() {
 	r.Run(":8080")
 }
 
-// r.Use(cors.New(cors.Config{
-	// 	AllowOrigins:     []string{"http://localhost:5173"}, // เปลี่ยนให้ตรงกับ origin frontend
-	// 	AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-	// 	AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
-	// 	ExposeHeaders:    []string{"Content-Length"},
-	// 	AllowCredentials: true,
-	// 	MaxAge:           12 * time.Hour,
-	// }))
 

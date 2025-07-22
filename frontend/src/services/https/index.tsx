@@ -1,3 +1,5 @@
+// ✅ REFACTORED: Dynamic requestOptions to always use latest token from localStorage
+
 import axios, { AxiosError } from "axios";
 
 import type { AccommodationInterface } from "../../interfaces/Accommodation";
@@ -8,27 +10,24 @@ import type { LandmarkInterface } from "../../interfaces/Landmark";
 import type { RestaurantInterface } from "../../interfaces/Restaurant";
 import type { UserInterface } from "../../interfaces/User";
 import type { SignInInterface } from "../../interfaces/SignIn";
-import type { GroqResponse} from "../../interfaces/Groq";
+import type { GroqResponse } from "../../interfaces/Groq";
 
 const apiUrl = "http://localhost:8080";
-const Authorization = localStorage.getItem("token");
-const Bearer = localStorage.getItem("token_type");
 
-const requestOptions = {
-
+function getAuthHeaders() {
+  const token = localStorage.getItem("token");
+  const tokenType = localStorage.getItem("token_type");
+  return {
     headers: {
-  
       "Content-Type": "application/json",
-  
-      Authorization: `${Bearer} ${Authorization}`,
-  
+      Authorization: `${tokenType} ${token}`,
     },
-  
   };
+}
 
 async function GetAllAccommodations(): Promise<AccommodationInterface[]> {
     try {
-        const response = await axios.get<AccommodationInterface[]>(`${apiUrl}/accommodations`, requestOptions);
+        const response = await axios.get<AccommodationInterface[]>(`${apiUrl}/accommodations`, getAuthHeaders());
         return response.data;
     } catch (error) {
         throw new Error((error as AxiosError).message);
@@ -37,7 +36,7 @@ async function GetAllAccommodations(): Promise<AccommodationInterface[]> {
 
 async function GetAccommodationById(id: number): Promise<AccommodationInterface> {
     try {
-        const response = await axios.get<AccommodationInterface>(`${apiUrl}/accommodations/${id}`, requestOptions);
+        const response = await axios.get<AccommodationInterface>(`${apiUrl}/accommodations/${id}`, getAuthHeaders());
         return response.data;
     } catch (error) {
         throw new Error((error as AxiosError).message);
@@ -46,7 +45,7 @@ async function GetAccommodationById(id: number): Promise<AccommodationInterface>
 
 async function CreateAccommodation(accommodation: AccommodationInterface): Promise<AccommodationInterface> {
     try {
-        const response = await axios.post<AccommodationInterface>(`${apiUrl}/accommodations`, accommodation, requestOptions);
+        const response = await axios.post<AccommodationInterface>(`${apiUrl}/accommodations`, accommodation, getAuthHeaders());
         return response.data;
     } catch (error) {
         throw new Error((error as AxiosError).message);
@@ -55,7 +54,7 @@ async function CreateAccommodation(accommodation: AccommodationInterface): Promi
 
 async function UpdateAccommodation(id: number, accommodation: AccommodationInterface): Promise<AccommodationInterface> {
     try {
-        const response = await axios.put<AccommodationInterface>(`${apiUrl}/accommodations/${id}`, accommodation, requestOptions);
+        const response = await axios.put<AccommodationInterface>(`${apiUrl}/accommodations/${id}`, accommodation,  getAuthHeaders());
         return response.data;
     } catch (error) {
         throw new Error((error as AxiosError).message);
@@ -64,7 +63,7 @@ async function UpdateAccommodation(id: number, accommodation: AccommodationInter
 
 async function DeleteAccommodation(id: number): Promise<void> {
     try {
-        await axios.delete(`${apiUrl}/accommodations/${id}`, requestOptions);
+        await axios.delete(`${apiUrl}/accommodations/${id}`, getAuthHeaders());
     } catch (error) {
         throw new Error((error as AxiosError).message);
     }
@@ -72,7 +71,7 @@ async function DeleteAccommodation(id: number): Promise<void> {
 
 async function GetAllConditions(): Promise<ConditionInterface[]> {
     try {
-        const response = await axios.get<ConditionInterface[]>(`${apiUrl}/conditions`, requestOptions);
+        const response = await axios.get<ConditionInterface[]>(`${apiUrl}/conditions`, getAuthHeaders());
         return response.data;
     }
 catch (error) {
@@ -82,7 +81,7 @@ catch (error) {
 
 async function GetConditionById(id: number): Promise<ConditionInterface> {
     try {
-        const response = await axios.get<ConditionInterface>(`${apiUrl}/conditions/${id}`, requestOptions);
+        const response = await axios.get<ConditionInterface>(`${apiUrl}/conditions/${id}`, getAuthHeaders());
         return response.data;
     } catch (error) {
         throw new Error((error as AxiosError).message);
@@ -91,7 +90,7 @@ async function GetConditionById(id: number): Promise<ConditionInterface> {
 
 async function CreateCondition(condition: ConditionInterface): Promise<ConditionInterface> {
     try {
-        const response = await axios.post<ConditionInterface>(`${apiUrl}/conditions`, condition, requestOptions);
+        const response = await axios.post<ConditionInterface>(`${apiUrl}/conditions`, condition, getAuthHeaders());
         return response.data;
     }
 catch (error) {
@@ -101,7 +100,7 @@ catch (error) {
 
 async function UpdateCondition(id: number, condition: ConditionInterface): Promise<ConditionInterface> {
     try {
-        const response = await axios.put<ConditionInterface>(`${apiUrl}/conditions/${id}`, condition, requestOptions);
+        const response = await axios.put<ConditionInterface>(`${apiUrl}/conditions/${id}`, condition, getAuthHeaders());
         return response.data;
     } catch (error) {
         throw new Error((error as AxiosError).message);
@@ -110,7 +109,7 @@ async function UpdateCondition(id: number, condition: ConditionInterface): Promi
 
 async function DeleteCondition(id: number): Promise<void> {
     try {
-        await axios.delete(`${apiUrl}/conditions/${id}`, requestOptions);
+        await axios.delete(`${apiUrl}/conditions/${id}`, getAuthHeaders());
     } catch (error) {
         throw new Error((error as AxiosError).message);
     }
@@ -118,7 +117,7 @@ async function DeleteCondition(id: number): Promise<void> {
 
 async function GetAllShortestPaths(): Promise<ShortestpathInterface[]> {
     try {
-        const response = await axios.get<ShortestpathInterface[]>(`${apiUrl}/shortest-paths`, requestOptions);
+        const response = await axios.get<ShortestpathInterface[]>(`${apiUrl}/shortest-paths`, getAuthHeaders());
         return response.data;
     } catch (error) {
         throw new Error((error as AxiosError).message);
@@ -127,7 +126,7 @@ async function GetAllShortestPaths(): Promise<ShortestpathInterface[]> {
 
 async function GetShortestPathById(id: number): Promise<ShortestpathInterface> {
     try {
-        const response = await axios.get<ShortestpathInterface>(`${apiUrl}/shortest-paths/${id}`, requestOptions);
+        const response = await axios.get<ShortestpathInterface>(`${apiUrl}/shortest-paths/${id}`, getAuthHeaders());
         return response.data;
     } catch (error) {
         throw new Error((error as AxiosError).message);
@@ -136,7 +135,7 @@ async function GetShortestPathById(id: number): Promise<ShortestpathInterface> {
 
 async function CreateShortestPath(shortestPath: ShortestpathInterface): Promise<ShortestpathInterface> {
   try {
-    const response = await axios.post<ShortestpathInterface>(`${apiUrl}/shortest-paths`, shortestPath, requestOptions);
+    const response = await axios.post<ShortestpathInterface>(`${apiUrl}/shortest-paths`, shortestPath, getAuthHeaders());
     return response.data;
   } catch (error) {
     throw new Error((error as AxiosError).message);
@@ -145,7 +144,7 @@ async function CreateShortestPath(shortestPath: ShortestpathInterface): Promise<
 
 async function UpdateShortestPath(id: number, shortestPath: ShortestpathInterface): Promise<ShortestpathInterface> {
     try {
-        const response = await axios.put<ShortestpathInterface>(`${apiUrl}/shortest-paths/${id}`, shortestPath, requestOptions);
+        const response = await axios.put<ShortestpathInterface>(`${apiUrl}/shortest-paths/${id}`, shortestPath, getAuthHeaders());
         return response.data;
     } catch (error) {
         throw new Error((error as AxiosError).message);
@@ -154,7 +153,7 @@ async function UpdateShortestPath(id: number, shortestPath: ShortestpathInterfac
 
 async function DeleteShortestPath(id: number): Promise<void> {
     try {
-        await axios.delete(`${apiUrl}/shortest-paths/${id}`, requestOptions);
+        await axios.delete(`${apiUrl}/shortest-paths/${id}`, getAuthHeaders());
     } catch (error) {
         throw new Error((error as AxiosError).message);
     }
@@ -162,7 +161,7 @@ async function DeleteShortestPath(id: number): Promise<void> {
 
 async function GetAllTrips(): Promise<TripInterface[]> {
     try {
-        const response = await axios.get<TripInterface[]>(`${apiUrl}/trips`, requestOptions);
+        const response = await axios.get<TripInterface[]>(`${apiUrl}/trips`, getAuthHeaders());
         return response.data;
     } catch (error) {
         throw new Error((error as AxiosError).message);
@@ -171,16 +170,43 @@ async function GetAllTrips(): Promise<TripInterface[]> {
 
 async function GetTripById(id: number): Promise<TripInterface> {
     try {
-        const response = await axios.get<TripInterface>(`${apiUrl}/trips/${id}`, requestOptions);
+        const response = await axios.get<TripInterface>(`${apiUrl}/trips/${id}`, getAuthHeaders());
         return response.data;
     } catch (error) {
         throw new Error((error as AxiosError).message);
     }
 }
 
+async function ExportTripToTemplate(tripId: number): Promise<string> {
+  const token = localStorage.getItem("token");
+  const tokenType = localStorage.getItem("token_type");
+
+  if (!token || !tokenType) {
+    throw new Error("ยังไม่ได้ login หรือ token หาย");
+  }
+
+  try {
+    const response = await axios.get(`${apiUrl}/trips/${tripId}/export`, {
+      headers: {
+        Authorization: `${tokenType} ${token}`,
+      },
+    });
+
+    const url = response.data.url || response.data.download_url;
+    if (!url) {
+      throw new Error("ไม่พบลิงก์สำหรับดาวน์โหลดเอกสาร");
+    }
+
+    return url;
+  } catch (error) {
+    throw new Error((error as AxiosError).message);
+  }
+}
+
+
 async function CreateTrip(trip: TripInterface): Promise<TripInterface> {
     try {
-        const response = await axios.post<TripInterface>(`${apiUrl}/trips`, trip, requestOptions);
+        const response = await axios.post<TripInterface>(`${apiUrl}/trips`, trip, getAuthHeaders());
         return response.data;
     } catch (error) {
         throw new Error((error as AxiosError).message);
@@ -189,7 +215,7 @@ async function CreateTrip(trip: TripInterface): Promise<TripInterface> {
 
 async function UpdateTrip(id: number, trip: TripInterface): Promise<TripInterface> {
     try {
-        const response = await axios.put<TripInterface>(`${apiUrl}/trips/${id}`, trip, requestOptions);
+        const response = await axios.put<TripInterface>(`${apiUrl}/trips/${id}`, trip, getAuthHeaders());
         return response.data;
     } catch (error) {
         throw new Error((error as AxiosError).message);
@@ -198,7 +224,7 @@ async function UpdateTrip(id: number, trip: TripInterface): Promise<TripInterfac
 
 async function DeleteTrip(id: number): Promise<void> {
     try {
-        await axios.delete(`${apiUrl}/trips/${id}`, requestOptions);
+        await axios.delete(`${apiUrl}/trips/${id}`, getAuthHeaders());
     } catch (error) {
         throw new Error((error as AxiosError).message);
     }
@@ -206,7 +232,7 @@ async function DeleteTrip(id: number): Promise<void> {
 
 async function GetAllLandmarks(): Promise<LandmarkInterface[]> {
     try {
-        const response = await axios.get<LandmarkInterface[]>(`${apiUrl}/landmarks`, requestOptions);
+        const response = await axios.get<LandmarkInterface[]>(`${apiUrl}/landmarks`, getAuthHeaders());
         return response.data;
     } catch (error) {
         throw new Error((error as AxiosError).message);
@@ -215,7 +241,7 @@ async function GetAllLandmarks(): Promise<LandmarkInterface[]> {
 
 async function GetLandmarkById(id: number): Promise<LandmarkInterface> {
     try {
-        const response = await axios.get<LandmarkInterface>(`${apiUrl}/landmarks/${id}`, requestOptions);
+        const response = await axios.get<LandmarkInterface>(`${apiUrl}/landmarks/${id}`, getAuthHeaders());
         return response.data;
     } catch (error) {
         throw new Error((error as AxiosError).message);
@@ -224,7 +250,7 @@ async function GetLandmarkById(id: number): Promise<LandmarkInterface> {
 
 async function CreateLandmark(landmark: LandmarkInterface): Promise<LandmarkInterface> {
     try {
-        const response = await axios.post<LandmarkInterface>(`${apiUrl}/landmarks`, landmark, requestOptions);
+        const response = await axios.post<LandmarkInterface>(`${apiUrl}/landmarks`, landmark, getAuthHeaders());
         return response.data;
     } catch (error) {
         throw new Error((error as AxiosError).message);
@@ -233,7 +259,7 @@ async function CreateLandmark(landmark: LandmarkInterface): Promise<LandmarkInte
 
 async function UpdateLandmark(id: number, landmark: LandmarkInterface): Promise<LandmarkInterface> {
     try {
-        const response = await axios.put<LandmarkInterface>(`${apiUrl}/landmarks/${id}`, landmark, requestOptions);
+        const response = await axios.put<LandmarkInterface>(`${apiUrl}/landmarks/${id}`, landmark, getAuthHeaders());
         return response.data;
     } catch (error) {
         throw new Error((error as AxiosError).message);
@@ -242,7 +268,7 @@ async function UpdateLandmark(id: number, landmark: LandmarkInterface): Promise<
 
 async function DeleteLandmark(id: number): Promise<void> {
     try {
-        await axios.delete(`${apiUrl}/landmarks/${id}`, requestOptions);
+        await axios.delete(`${apiUrl}/landmarks/${id}`, getAuthHeaders());
     } catch (error) {
         throw new Error((error as AxiosError).message);
     }
@@ -250,7 +276,7 @@ async function DeleteLandmark(id: number): Promise<void> {
 
 async function GetAllRestaurants(): Promise<RestaurantInterface[]> {
     try {
-        const response = await axios.get<RestaurantInterface[]>(`${apiUrl}/restaurants`, requestOptions);
+        const response = await axios.get<RestaurantInterface[]>(`${apiUrl}/restaurants`, getAuthHeaders());
         return response.data;
     } catch (error) {
         throw new Error((error as AxiosError).message);
@@ -259,7 +285,7 @@ async function GetAllRestaurants(): Promise<RestaurantInterface[]> {
 
 async function GetRestaurantById(id: number): Promise<RestaurantInterface> {
     try {
-        const response = await axios.get<RestaurantInterface>(`${apiUrl}/restaurants/${id}`, requestOptions);
+        const response = await axios.get<RestaurantInterface>(`${apiUrl}/restaurants/${id}`, getAuthHeaders());
         return response.data;
     } catch (error) {
         throw new Error((error as AxiosError).message);
@@ -268,7 +294,7 @@ async function GetRestaurantById(id: number): Promise<RestaurantInterface> {
 
 async function CreateRestaurant(restaurant: RestaurantInterface): Promise<RestaurantInterface> {
     try {
-        const response = await axios.post<RestaurantInterface>(`${apiUrl}/restaurants`, restaurant, requestOptions);
+        const response = await axios.post<RestaurantInterface>(`${apiUrl}/restaurants`, restaurant, getAuthHeaders());
         return response.data;
     } catch (error) {
         throw new Error((error as AxiosError).message);
@@ -277,7 +303,7 @@ async function CreateRestaurant(restaurant: RestaurantInterface): Promise<Restau
 
 async function UpdateRestaurant(id: number, restaurant: RestaurantInterface): Promise<RestaurantInterface> {
     try {
-        const response = await axios.put<RestaurantInterface>(`${apiUrl}/restaurants/${id}`, restaurant, requestOptions);
+        const response = await axios.put<RestaurantInterface>(`${apiUrl}/restaurants/${id}`, restaurant, getAuthHeaders());
         return response.data;
     } catch (error) {
         throw new Error((error as AxiosError).message);
@@ -286,7 +312,7 @@ async function UpdateRestaurant(id: number, restaurant: RestaurantInterface): Pr
 
 async function DeleteRestaurant(id: number): Promise<void> {
     try {
-        await axios.delete(`${apiUrl}/restaurants/${id}`, requestOptions);
+        await axios.delete(`${apiUrl}/restaurants/${id}`, getAuthHeaders());
     } catch (error) {
         throw new Error((error as AxiosError).message);
     }
@@ -294,7 +320,7 @@ async function DeleteRestaurant(id: number): Promise<void> {
 
 async function GetAllUsers(): Promise<UserInterface[]> {
     try {
-        const response = await axios.get<UserInterface[]>(`${apiUrl}/users`, requestOptions);
+        const response = await axios.get<UserInterface[]>(`${apiUrl}/users`, getAuthHeaders());
         return response.data;
     } catch (error) {
         throw new Error((error as AxiosError).message);
@@ -303,7 +329,7 @@ async function GetAllUsers(): Promise<UserInterface[]> {
 
 async function GetUserById(id: number): Promise<UserInterface> {
     try {
-        const response = await axios.get<UserInterface>(`${apiUrl}/users/${id}`, requestOptions);
+        const response = await axios.get<UserInterface>(`${apiUrl}/users/${id}`, getAuthHeaders());
         return response.data;
     } catch (error) {
         throw new Error((error as AxiosError).message);
@@ -312,7 +338,7 @@ async function GetUserById(id: number): Promise<UserInterface> {
 
 async function CreateUser(user: UserInterface): Promise<UserInterface> {
     try {
-        const response = await axios.post<UserInterface>(`${apiUrl}/users`, user, requestOptions);
+        const response = await axios.post<UserInterface>(`${apiUrl}/users`, user, getAuthHeaders());
         return response.data;
     } catch (error) {
         throw new Error((error as AxiosError).message);
@@ -321,7 +347,7 @@ async function CreateUser(user: UserInterface): Promise<UserInterface> {
 
 async function UpdateUser(id: number, user: UserInterface): Promise<UserInterface> {
     try {
-        const response = await axios.put<UserInterface>(`${apiUrl}/users/${id}`, user, requestOptions);
+        const response = await axios.put<UserInterface>(`${apiUrl}/users/${id}`, user, getAuthHeaders());
         return response.data;
     } catch (error) {
         throw new Error((error as AxiosError).message);
@@ -330,7 +356,7 @@ async function UpdateUser(id: number, user: UserInterface): Promise<UserInterfac
 
 async function DeleteUser(id: number): Promise<void> {
     try {
-        await axios.delete(`${apiUrl}/users/${id}`, requestOptions);
+        await axios.delete(`${apiUrl}/users/${id}`, getAuthHeaders());
     } catch (error) {
         throw new Error((error as AxiosError).message);
     }
@@ -437,4 +463,5 @@ export {
     DeleteUser, 
     GetRouteFromAPI,
     PostGroq,
+    ExportTripToTemplate,
 }
