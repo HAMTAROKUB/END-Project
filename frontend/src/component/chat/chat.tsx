@@ -282,6 +282,7 @@ try {
   console.log('📄 สร้างเอกสารจาก template สำเร็จ:', exportResult);
 
   // ส่งลิงก์ให้ผู้ใช้เปิดดู
+  console.log('📄 exportResult ได้ค่า:', exportResult);
   if (exportResult) {
   setMessages((prev) => [
     ...prev,

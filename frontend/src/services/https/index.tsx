@@ -186,11 +186,15 @@ async function ExportTripToTemplate(tripId: number): Promise<string> {
   }
 
   try {
-    const response = await axios.get(`${apiUrl}/trips/${tripId}/export`, {
-      headers: {
-        Authorization: `${tokenType} ${token}`,
-      },
-    });
+    const response = await axios.post(`${apiUrl}/trips/${tripId}/export`, 
+      { trip_id: tripId }, // ✅ ส่ง JSON ไปด้วย
+      {
+        headers: {
+          Authorization: `${tokenType} ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     const url = response.data.url || response.data.download_url;
     if (!url) {

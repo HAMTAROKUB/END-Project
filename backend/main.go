@@ -94,7 +94,7 @@ func main() {
 	r.POST("/trips", tripsCtrl.CreateTrip)
 	authorized.GET("/trips", tripsCtrl.GetAllTrips)
 	authorized.GET("/trips/:id", tripsCtrl.GetTripByID)
-	r.GET("/trips/:id/export", tripsCtrl.ExportTripToTemplate)
+	r.POST("/trips/:id/export", tripsCtrl.ExportTripToTemplate)
 	authorized.PUT("/trips/:id", tripsCtrl.UpdateTrip)
 	authorized.DELETE("/trips/:id", tripsCtrl.DeleteTrip)
 

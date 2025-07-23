@@ -7,6 +7,7 @@ import (
 	"bytes"
 	"strings"
 	"fmt"
+	"log"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gtwndtl/trip-spark-builder/entity"
@@ -117,6 +118,7 @@ func (ctrl *TripsController) DeleteTrip(c *gin.Context) {
 
 // GET /trips/:id/export
 func (ctrl *TripsController) ExportTripToTemplate(c *gin.Context) {
+	fmt.Println("🎯 ExportTripToTemplate ถูกเรียกใช้งานแล้ว")
 	id := c.Param("id")
 
 	var trip entity.Trips
@@ -153,19 +155,21 @@ func (ctrl *TripsController) ExportTripToTemplate(c *gin.Context) {
 	}
 
 	// แปลงเป็น JSON
-	body, err := json.Marshal(payload)
+	body, err := json.MarshalIndent(payload, "", "  ") // 🔍 สวยงามขึ้น
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "ไม่สามารถแปลง payload เป็น JSON ได้"})
 		return
 	}
 
+	log.Println("🚀 JSON ที่จะส่งไป:\n" + string(body)) // ✅ Log payload ที่จะส่ง
+
 	// สร้าง POST Request
-	req, err := http.NewRequest("POST", "https://api.apitemplate.io/v1/create?template_id=09a77b23698af788", bytes.NewBuffer(body))
+	req, err := http.NewRequest("POST", "https://api.apitemplate.io/v1/create?template_id=9c577b2366a7679e", bytes.NewBuffer(body))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "ไม่สามารถสร้างคำขอได้"})
 		return
 	}
-	req.Header.Set("X-API-KEY", "c3c0MzQxMDk6MzEyOTQ6cW5hbHhhRmpldUs4UnR3MQ=")
+	req.Header.Set("X-API-KEY", "2f58MzQzODk6MzE1NzQ6WTVoc2lmTW14QzFmS2RtUA=")
 	req.Header.Set("Content-Type", "application/json")
 
 	client := &http.Client{}
@@ -193,12 +197,11 @@ func (ctrl *TripsController) ExportTripToTemplate(c *gin.Context) {
 		return
 	}
 
+	// ✅ ส่งเฉพาะข้อมูลที่ frontend ใช้
 	c.JSON(http.StatusOK, gin.H{
-	"status":       "success",
-	"download_url": result["download_url"],
-})
-
-	c.JSON(http.StatusOK, result)
+		"status":       "success",
+		"download_url": result["download_url"],
+	})
 }
 
 
